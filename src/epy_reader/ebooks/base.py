@@ -1,7 +1,10 @@
+import os
 import xml.etree.ElementTree as ET
 from typing import Tuple, Union
+from urllib.parse import urlparse
 
 from epy_reader.models import BookMetadata, TocEntry
+from epy_reader.file_cache import FileCache
 
 
 class Ebook:
@@ -31,6 +34,16 @@ class Ebook:
     @toc_entries.setter
     def toc_entries(self, value: Tuple[TocEntry, ...]) -> None:
         self._toc_entries = value
+
+    def get_abspath(self, value: str) -> str:
+        return value if urlparse(value).scheme else os.path.abspath(value)
+
+    def ensure_cached(self, value: str) -> str:
+        try:
+            return str(self._file_cache.ensure_cached(value))
+        except AttributeError:
+            self._file_cache = FileCache()
+            return str(self._file_cache.ensure_cached(value))
 
     def get_meta(self) -> BookMetadata:
         raise NotImplementedError("Ebook.get_meta() not implemented")

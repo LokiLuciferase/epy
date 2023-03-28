@@ -26,8 +26,8 @@ class Epub(Ebook):
     }
 
     def __init__(self, fileepub: str):
-        self.path: str = os.path.abspath(fileepub)
-        self.file: Union[zipfile.ZipFile, str] = zipfile.ZipFile(fileepub, "r")
+        self.path: str = self.get_abspath(fileepub)
+        self.file: Union[zipfile.ZipFile, str] = fileepub
 
         # populate these attributes
         # by calling self.initialize()
@@ -139,6 +139,7 @@ class Epub(Ebook):
         return tuple(toc_entries)
 
     def initialize(self) -> None:
+        self.file = zipfile.ZipFile(self.ensure_cached(self.file), "r")
         assert isinstance(self.file, zipfile.ZipFile)
 
         container = ET.parse(self.file.open("META-INF/container.xml"))

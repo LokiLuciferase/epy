@@ -15,9 +15,7 @@ from epy_reader.speakers import SpeakerBaseModel, SpeakerMimic, SpeakerPico, Spe
 
 def get_ebook_obj(filepath: str) -> Ebook:
     file_ext = os.path.splitext(filepath)[1].lower()
-    if is_url(filepath):
-        return URL(filepath)
-    elif file_ext in {".epub", ".epub3"}:
+    if file_ext in {".epub", ".epub3"}:
         return Epub(filepath)
     elif file_ext == ".fb2":
         return FictionBook(filepath)
@@ -25,6 +23,8 @@ def get_ebook_obj(filepath: str) -> Ebook:
         return Mobi(filepath)
     elif file_ext in {".azw", ".azw3"}:
         return Azw(filepath)
+    elif is_url(filepath):
+        return URL(filepath)
     else:
         sys.exit("ERROR: Format not supported. (Supported: epub, fb2)")
 

@@ -11,7 +11,7 @@ class FictionBook(Ebook):
     NAMESPACE = {"FB2": "http://www.gribuser.ru/xml/fictionbook/2.0"}
 
     def __init__(self, filefb: str):
-        self.path = os.path.abspath(filefb)
+        self.path: str = self.get_abspath(filefb)
         self.file = filefb
 
         # populate these attribute
@@ -40,7 +40,7 @@ class FictionBook(Ebook):
         )
 
     def initialize(self) -> None:
-        cont = ET.parse(self.file)
+        cont = ET.parse(self.ensure_cached(self.file))
         self.root = cont.getroot()
 
         self.contents = tuple(self.root.findall("FB2:body/*", FictionBook.NAMESPACE))

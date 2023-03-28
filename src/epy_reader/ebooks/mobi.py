@@ -12,7 +12,7 @@ from epy_reader.tools import unpack_kindle_book
 
 class Mobi(Epub):
     def __init__(self, filemobi: str):
-        self.path = os.path.abspath(filemobi)
+        self.path: str = self.get_abspath(filemobi)
         self.file = tempfile.mkdtemp(prefix="epy-")
 
         # populate these attribute
@@ -30,7 +30,7 @@ class Mobi(Epub):
         assert isinstance(self.file, str)
 
         with contextlib.redirect_stdout(None):
-            unpack_kindle_book(self.path, self.file, epubver="A", use_hd=True)
+            unpack_kindle_book(self.ensure_cached(self.path), self.file, epubver="A", use_hd=True)
             # TODO: add cleanup here
 
         self.root_dirpath = os.path.join(self.file, "mobi7")
