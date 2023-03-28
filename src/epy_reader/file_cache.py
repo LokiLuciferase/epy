@@ -53,7 +53,7 @@ class FileCache:
             self._cache_dir = TemporaryDirectory()
             self._cache_dir_path = Path(self._cache_dir.name)
         else:
-            self.cache_dir = cache_dir
+            self._cache_dir_path = Path(cache_dir)
 
     def ensure_cached(self, path_or_url: str) -> str:
         parsed = urlparse(path_or_url)

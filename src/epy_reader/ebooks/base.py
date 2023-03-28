@@ -1,9 +1,11 @@
 import os
 import xml.etree.ElementTree as ET
+from pathlib import Path
 from typing import Tuple, Union
 from urllib.parse import urlparse
 
 from epy_reader.models import BookMetadata, TocEntry
+from epy_reader.models import AppData
 from epy_reader.file_cache import FileCache
 
 
@@ -42,7 +44,7 @@ class Ebook:
         try:
             return str(self._file_cache.ensure_cached(value))
         except AttributeError:
-            self._file_cache = FileCache()
+            self._file_cache = FileCache(Path(AppData().cache_dir))
             return str(self._file_cache.ensure_cached(value))
 
     def get_meta(self) -> BookMetadata:

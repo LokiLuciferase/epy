@@ -230,3 +230,22 @@ class AppData:
             os.makedirs(prefix, exist_ok=True)
 
         return prefix
+
+    @property
+    def cache_dir(self) -> Optional[str]:
+        homedir = os.getenv("HOME")
+        userdir = os.getenv("USERPROFILE")
+        cache_dir = None
+
+        if homedir:
+            if os.path.isdir(os.path.join(homedir, ".cache")):
+                cache_dir = os.path.join(homedir, ".cache", "epy")
+            else:
+                cache_dir = os.path.join(homedir, ".epy", "cache")
+        elif userdir:
+            cache_dir = os.path.join(userdir, ".epy", "cache")
+
+        if cache_dir:
+            os.makedirs(cache_dir, exist_ok=True)
+
+        return cache_dir
