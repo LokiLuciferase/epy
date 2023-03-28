@@ -34,10 +34,18 @@ class FileCache:
         if not shutil.which("scp"):
             raise RuntimeError("`scp` not found: cannot resolve SSH URL")
         parsed = urlparse(url)
-        cmd = ["scp", "-Tq", f'{parsed.netloc}:{shlex.quote(parsed.path)}', f'{out.parent}/tmp']
-        run = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        if run.returncode != 0:
-            raise RuntimeError(f"Failed to download {url}: {run.stderr.decode('utf-8')}")
+        success = False
+        errmsg = ""
+        for path in (parsed.path, shlex.quote(parsed.path)):
+            cmd = ["scp", "-Tq", f'{parsed.netloc}:{path}', f'{out.parent}/tmp']
+            run = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            if run.returncode == 0:
+                success = True
+                break
+            else:
+                errmsg = run.stderr.decode("utf-8")
+        if not success:
+            raise RuntimeError(f"Failed to download {url}: {errmsg}")
         shutil.move(out.parent.joinpath("tmp"), str(out))
 
     def __init__(self, cache_dir: Path = None):
